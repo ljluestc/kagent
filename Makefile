@@ -442,7 +442,7 @@ create-kind-cluster: ## Create a local kind cluster with MetalLB
 
 .PHONY: use-kind-cluster
 use-kind-cluster: ## Merge kind kubeconfig and set kagent as the default namespace
-	kind get kubeconfig --name $(KIND_CLUSTER_NAME) > $(KIND_KUBECONFIG)
+	kind get kubeconfig --name $(KIND_CLUSTER_NAME) $(if $(filter true,$(KIND_INTERNAL_KUBECONFIG)),--internal) > $(KIND_KUBECONFIG)
 	KUBECONFIG=~/.kube/config:$(KIND_KUBECONFIG) kubectl config view --merge --flatten > ~/.kube/config.tmp && mv ~/.kube/config.tmp ~/.kube/config && chmod $(KUBECONFIG_PERM) ~/.kube/config
 	kubectl --context kind-$(KIND_CLUSTER_NAME) create namespace kagent || true
 	kubectl config set-context kind-$(KIND_CLUSTER_NAME) --namespace kagent || true

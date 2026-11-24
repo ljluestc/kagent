@@ -566,6 +566,9 @@ jobs:
       - name: Test CLI install script
         run: bash scripts/get-kagent_test.sh
 
+      - name: Test Kind setup script
+        run: bash scripts/kind/setup-kind_test.sh
+
       - name: Run helm unit tests
         run: |
           helm unittest helm/kagent

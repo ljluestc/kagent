@@ -140,7 +140,7 @@ e2e: core/bin/kagent-local ## Run end-to-end tests.
 	@set -eu; \
 	  kubeconfig=$$(mktemp); \
 	  trap 'rm -f "$$kubeconfig"' EXIT; \
-	  kind get kubeconfig --name $(KIND_CLUSTER_NAME) > "$$kubeconfig"; \
+	  kind get kubeconfig --name $(KIND_CLUSTER_NAME) $(if $(filter true,$(KIND_INTERNAL_KUBECONFIG)),--internal) > "$$kubeconfig"; \
 	  KAGENT_E2E_CLI=$(CURDIR)/core/bin/kagent-local KUBECONFIG="$$kubeconfig" go test -v github.com/kagent-dev/kagent/go/core/test/e2e -parallel $(E2E_PARALLEL) -count=1 -timeout=30m
 
 ##@ Dependencies

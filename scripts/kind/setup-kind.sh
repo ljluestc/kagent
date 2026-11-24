@@ -97,7 +97,23 @@ if [ "$("${CONTAINER_RUNTIME}" inspect -f='{{json .NetworkSettings.Networks.kind
   "${CONTAINER_RUNTIME}" network connect "kind" "${reg_name}"
 fi
 
-# 5. Document the local registry
+# 5. Make the API server reachable from inside a dev container
+#
+# Kind publishes the API server on the container host's loopback, which a
+# container on its own network cannot reach. Join the kind network and use the
+# node's internal address, which is also in the API server certificate. This
+# runs even when the cluster exists: a rebuilt dev container has a new ID and no
+# kubeconfig.
+if [ "${KIND_INTERNAL_KUBECONFIG:-false}" = true ]; then
+  # Docker sets a container's hostname to its short ID by default.
+  self=${HOSTNAME}
+  if [ "$("${CONTAINER_RUNTIME}" inspect -f='{{json .NetworkSettings.Networks.kind}}' "${self}")" = 'null' ]; then
+    "${CONTAINER_RUNTIME}" network connect "kind" "${self}"
+  fi
+  kind export kubeconfig --name "${KIND_CLUSTER_NAME}" --internal
+fi
+
+# 6. Document the local registry
 # https://github.com/kubernetes/enhancements/tree/master/keps/sig-cluster-lifecycle/generic/1755-communicating-a-local-registry
 cat <<EOF | kubectl --context "kind-${KIND_CLUSTER_NAME}" apply -f -
 apiVersion: v1

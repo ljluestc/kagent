@@ -379,6 +379,8 @@ make MODEL_PROVIDER=openAI kagent-cli-install
 
 Use `kagent install --dry-run --output-dir ./kagent-install` to export the Helm commands and merged values without changing the cluster. See [Exporting an installation](../docs/installation.md) for credential handling and prerequisite setup.
 
+For Azure, see [Running kagent on Azure Kubernetes Service](../docs/aks.md).
+
 ### Using kagent cli
 
 ```bash
